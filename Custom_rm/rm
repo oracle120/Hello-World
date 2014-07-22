@@ -1,0 +1,75 @@
+#!/bin/bash
+#set -x
+
+RM=/bin/rm
+CP=/bin/cp
+CHMOD=/bin/chmod
+
+des_path=/gqz
+
+ERR_CODE=1
+
+
+function rm_gqz
+{
+
+    if [ $# -eq 0 ]
+    then
+    {
+        echo -e "\033[31m\033[5m Must give one or more param! \033[0m"
+        exit ${ERR_CODE}
+    }
+    fi
+    
+    typeset array=($@)
+    for arr in ${array[@]}
+    do
+    {
+        #echo ${arr}
+        case "${arr}X" in
+            "/X")
+                echo -e "\033[31m\033[5m The direction '/' is not permited to delete! \033[0m"
+                exit ${ERR_CODE}
+            ;;
+            "/rootX")
+                echo -e "\033[31m\033[5m The direction '/root' is not permited to delete! \033[0m"
+                exit ${ERR_CODE}
+            ;;
+            "/binX")
+                echo -e "\033[31m\033[5m The direction '/bin' is not permited to delete! \033[0m"
+                exit ${ERR_CODE}
+            ;;
+            "/bootX")
+                echo -e "\033[31m\033[5m The direction '/boot' is not permited to delete! \033[0m"
+                exit ${ERR_CODE}
+            ;;
+            "/etcX")
+                echo -e "\033[31m\033[5m The direction '/etc' is not permited to delete! \033[0m"
+                exit ${ERR_CODE}
+            ;;
+            "/devX")
+                echo -e "\033[31m\033[5m The direction '/dev' is not permited to delete! \033[0m"
+                exit ${ERR_CODE}
+            ;;
+            "/sbinX")
+                echo -e "\033[31m\033[5m The direction '/sbin' is not permited to delete! \033[0m"
+                exit ${ERR_CODE}
+            ;;
+            *)
+            ;;
+        esac
+
+    }
+    done
+
+    ${RM} ${array[*]}
+}
+
+
+function main
+{
+    rm_gqz $@
+}
+
+main $@
+exit $?

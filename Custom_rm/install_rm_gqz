@@ -1,0 +1,104 @@
+#!/bin/bash
+#set -x
+
+CP=/bin/cp
+CHMOD=/bin/chmod
+
+des_path=/gqz
+
+ERR_CODE=1
+
+function install_rm_gqz
+{
+    typeset workpath=$(pwd)
+
+    if [ ! -d ${des_path} ]
+    then
+    {
+        mkdir ${des_path}
+    }
+    fi
+
+    if [ "X${workpath}" != "X${des_path}" ]
+    then
+    {
+        ${CP} -rf ${workpath}/rm ${des_path}/rm
+        ${CP} -rf ${workpath}/install_rm_gqz ${des_path}/install_rm_gqz
+    }
+    fi
+
+    ${CHMOD} 755 ${des_path}/rm
+
+    alias rm='${des_path}/rm'
+
+    ${CP} -rf /etc/profile /etc/profile.install_rm_gqz
+    while read readline
+    do
+    {
+        command=$(echo ${readline} | egrep  "alias[ ]+rm='")
+        if [ "X${command}" != "X" ]
+        then
+        {
+            continue
+        }
+        fi
+        echo ${readline} >> ${des_path}/tmp
+    }
+    done < /etc/profile
+    mv ${des_path}/tmp /etc/profile
+
+}
+
+function uninstall_rm_gqz
+{
+    typeset workpath=$(pwd)
+
+    while read readline
+    do
+    {
+        command=$(echo ${readline} | egrep  "alias[ ]+rm='")
+        if [ "X${command}" != "X" ]
+        then
+        {
+            continue
+        }
+        fi
+        echo ${readline} >> ${des_path}/tmp
+    }
+    done < /etc/profile
+
+    mv ${des_path}/tmp /etc/profile
+
+    alias rm='/bin/rm'
+    command=$(rm -rf ${des_path})
+
+}
+
+function main
+{
+    if [ $# -ne 1 ]
+    then
+    {
+        echo -e "\033[33m please input param install | uninstall \033[0m"
+        exit 1
+    }
+    elif [ "${1}X" == "installX" ]
+    then
+    {
+        install_rm_gqz
+    }
+    elif [ "${1}X" == "uninstallX" ]
+    then
+    {
+        uninstall_rm_gqz
+    }
+    else
+    {
+        echo -e "\033[33m Error input param, please input install | uninstall \033[0m"
+        exit 1
+    }
+    fi
+}
+
+main $@
+exit $?

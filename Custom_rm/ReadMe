@@ -1,0 +1,7 @@
+1.对两个脚本，添加可执行权限：chmod 755 <文件名>
+2.执行install_rm_gqz install就可以将rm安装起来；执行install_rm_gqz uninstall就可以删除该小工具；
+
+Author          ：guoqingzhao
+E-mail          ：gqz@v-lover.com
+PublishDate     ：2014-07-22
+Personal WebSite：www.v-lover.com
