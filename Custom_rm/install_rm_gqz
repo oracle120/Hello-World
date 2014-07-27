@@ -30,21 +30,15 @@ function install_rm_gqz
     ${CHMOD} 755 ${des_path}/rm
 
     alias rm='${des_path}/rm'
+    export PATH=/gqz:$PATH
 
     ${CP} -rf /etc/profile /etc/profile.install_rm_gqz
-    while read readline
-    do
-    {
-        command=$(echo ${readline} | egrep  "alias[ ]+rm='")
-        if [ "X${command}" != "X" ]
-        then
-        {
-            continue
-        }
-        fi
-        echo ${readline} >> ${des_path}/tmp
-    }
-    done < /etc/profile
+
+    echo "alias rm='/gqz/rm'" >> /etc/profile
+    echo "export PATH=/gqz:$PATH" >> /etc/profile
+
+    source /etc/profile
+
     mv ${des_path}/tmp /etc/profile
 
 }
@@ -53,21 +47,14 @@ function uninstall_rm_gqz
 {
     typeset workpath=$(pwd)
 
-    while read readline
+    lineno=$(egrep -n '^[ ]*alias[ ]*rm=|[ ]*export[ ]*PATH' /etc/profile | awk -F: '{print $1}' | sort -r)
+    for num in ${lineno}
     do
     {
-        command=$(echo ${readline} | egrep  "alias[ ]+rm='")
-        if [ "X${command}" != "X" ]
-        then
-        {
-            continue
-        }
-        fi
-        echo ${readline} >> ${des_path}/tmp
+        sed "${num}d" /etc/profile > /etc/tmp.profile
+        mv /etc/tmp.profile /etc/profile
     }
-    done < /etc/profile
-
-    mv ${des_path}/tmp /etc/profile
+    done
 
     alias rm='/bin/rm'
     command=$(rm -rf ${des_path})
